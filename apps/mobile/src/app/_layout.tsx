@@ -22,7 +22,7 @@ export default function RootLayout() {
 
   return (
     <AppProviders>
-      <Stack />
+      <Stack screenOptions={{ headerShown: false }} />
     </AppProviders>
   );
 }
