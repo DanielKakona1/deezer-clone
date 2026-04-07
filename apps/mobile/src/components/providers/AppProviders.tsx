@@ -1,5 +1,6 @@
 import type { PropsWithChildren } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ThemeProvider } from 'styled-components/native';
 
 import { theme } from '@/styles/theme';
@@ -16,8 +17,10 @@ const queryClient = new QueryClient({
 
 export const AppProviders = ({ children }: PropsWithChildren) => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={theme}>{children}</ThemeProvider>
-    </QueryClientProvider>
+    <SafeAreaProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={theme}>{children}</ThemeProvider>
+      </QueryClientProvider>
+    </SafeAreaProvider>
   );
 };

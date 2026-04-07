@@ -1,5 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { Pressable } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 
 export default function SearchScreen() {
@@ -15,7 +16,7 @@ export default function SearchScreen() {
   );
 }
 
-const Container = styled.SafeAreaView`
+const Container = styled(SafeAreaView)`
   flex: 1;
   padding: ${({ theme }) => theme.spacing.xl}px ${({ theme }) => theme.spacing.lg}px;
   background-color: ${({ theme }) => theme.colors.background};

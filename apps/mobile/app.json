@@ -2,6 +2,7 @@
   "expo": {
     "name": "deezer-mobile-clone",
     "slug": "deezer-mobile-clone",
+    "scheme": "deezer-mobile-clone",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
