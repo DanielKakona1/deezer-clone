@@ -22,12 +22,7 @@ export default function RootLayout() {
 
   return (
     <AppProviders>
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          contentStyle: { backgroundColor: '#121216' },
-        }}
-      />
+      <Stack />
     </AppProviders>
   );
 }

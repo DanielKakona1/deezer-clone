@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "scripts": {
-    "dev": "EXPO_ROUTER_APP_ROOT=src/app expo start --clear",
+    "dev": "expo start --clear",
     "start": "pnpm dev",
-    "android": "EXPO_ROUTER_APP_ROOT=src/app expo start --android",
-    "ios": "EXPO_ROUTER_APP_ROOT=src/app expo start --ios",
-    "web": "EXPO_ROUTER_APP_ROOT=src/app expo start --web",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
     "test": "jest --passWithNoTests"
   },
   "dependencies": {
