@@ -1,0 +1,10 @@
+{
+  "name": "@deezer-mobile-clone/backend",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "echo \"Backend scaffold pending\"",
+    "build": "echo \"No backend build in step 1\"",
+    "test": "echo \"No backend tests in step 1\""
+  }
+}

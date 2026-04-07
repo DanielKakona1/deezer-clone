@@ -1,0 +1,10 @@
+{
+  "name": "@deezer-mobile-clone/mobile",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "echo \"Mobile app scaffold pending\"",
+    "build": "echo \"No mobile build in step 1\"",
+    "test": "echo \"No mobile tests in step 1\""
+  }
+}
