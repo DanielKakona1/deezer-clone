@@ -39,7 +39,7 @@ export const useArtistDetailsQueries = (artistId: number) => {
 
   const hasLoadedData = Boolean(artistQuery.data || topTracksQuery.data || albumsQuery.data);
 
-  const isRefreshing = isFetching && hasLoadedData;
+  const isRefreshing = useMemo(() => isFetching && hasLoadedData, [isFetching, hasLoadedData]);
 
   const refetchAll = useCallback(async () => {
     await Promise.all([artistQuery.refetch(), topTracksQuery.refetch(), albumsQuery.refetch()]);
