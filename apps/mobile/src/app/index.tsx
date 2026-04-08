@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, TextInput, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
@@ -72,6 +72,7 @@ const SkeletonRows = ({ rows }: { rows: number }) => {
 
 export default function SearchScreen() {
   const insets = useSafeAreaInsets();
+  const [isPullRefreshing, setIsPullRefreshing] = useState(false);
   const query = useSearchStore((state) => state.query);
   const setQuery = useSearchStore((state) => state.setQuery);
   const debouncedQuery = useDebounce(query, 260);
@@ -168,9 +169,16 @@ export default function SearchScreen() {
     [scrollY]
   );
 
-  const handleRefresh = useCallback(() => {
-    if (shouldSearch) {
-      void refetch();
+  const handleRefresh = useCallback(async () => {
+    if (!shouldSearch) {
+      return;
+    }
+
+    try {
+      setIsPullRefreshing(true);
+      await refetch();
+    } finally {
+      setIsPullRefreshing(false);
     }
   }, [refetch, shouldSearch]);
 
@@ -222,7 +230,7 @@ export default function SearchScreen() {
         scrollEventThrottle={16}
         renderItem={renderArtist}
         onRefresh={handleRefresh}
-        refreshing={isFetching && !isFetchingNextPage}
+        refreshing={isPullRefreshing}
         ListHeaderComponent={
           <SectionHeader>
             <SectionTitle>Artists</SectionTitle>
