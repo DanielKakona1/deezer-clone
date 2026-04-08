@@ -5,17 +5,19 @@ import {
   getArtistAlbums,
   getArtistById,
   getArtistTopTracks,
+  searchTracks,
   searchArtists,
-} from '../services/deezer.service';
+} from '../services/artist.service';
 
-jest.mock('../services/deezer.service', () => ({
+jest.mock('../services/artist.service', () => ({
+  searchTracks: jest.fn(),
   searchArtists: jest.fn(),
   getArtistById: jest.fn(),
   getArtistTopTracks: jest.fn(),
   getArtistAlbums: jest.fn(),
 }));
 
-describe('Deezer routes', () => {
+describe('Artist routes', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -27,6 +29,31 @@ describe('Deezer routes', () => {
     expect(response.body.message).toBe('Query parameter q is required');
   });
 
+  it('returns 400 when generic track search q param is missing', async () => {
+    const response = await request(app).get('/api/deezer/search');
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe('Query parameter q is required');
+  });
+
+  it('returns track search payload and forwards strict/order', async () => {
+    (searchTracks as unknown as jest.Mock).mockResolvedValue({
+      data: [{ id: 501, title: 'Mockingbird' }],
+      total: 1,
+    });
+
+    const response = await request(app).get(
+      '/api/deezer/search?q=eminem&strict=on&order=TRACK_ASC&limit=10&index=2',
+    );
+
+    expect(response.status).toBe(200);
+    expect(searchTracks).toHaveBeenCalledWith('eminem', 10, 2, {
+      strict: 'on',
+      order: 'TRACK_ASC',
+    });
+    expect(response.body.data[0].title).toBe('Mockingbird');
+  });
+
   it('returns artist search payload using defaults', async () => {
     (searchArtists as unknown as jest.Mock).mockResolvedValue({
       data: [{ id: 1, name: 'Rihanna' }],
@@ -36,8 +63,25 @@ describe('Deezer routes', () => {
     const response = await request(app).get('/api/deezer/search/artists?q=rihanna');
 
     expect(response.status).toBe(200);
-    expect(searchArtists).toHaveBeenCalledWith('rihanna', 25, 0);
+    expect(searchArtists).toHaveBeenCalledWith('rihanna', 25, 0, {});
     expect(response.body.data).toEqual([{ id: 1, name: 'Rihanna' }]);
+  });
+
+  it('forwards valid strict/order options for artist search', async () => {
+    (searchArtists as unknown as jest.Mock).mockResolvedValue({
+      data: [{ id: 7, name: 'Aloe Blacc' }],
+      total: 1,
+    });
+
+    const response = await request(app).get(
+      '/api/deezer/search/artists?q=aloe%20blacc&strict=on&order=ARTIST_ASC',
+    );
+
+    expect(response.status).toBe(200);
+    expect(searchArtists).toHaveBeenCalledWith('aloe blacc', 25, 0, {
+      strict: 'on',
+      order: 'ARTIST_ASC',
+    });
   });
 
   it('returns artist details payload', async () => {

@@ -1,7 +1,7 @@
-import { SearchCacheModel } from '../models/searchCache.model';
+import { SearchCacheModel } from '../models/search-cache.model';
 import { type CacheKey, getCachedPayload, setCachedPayload } from './cache.service';
 
-jest.mock('../models/searchCache.model', () => ({
+jest.mock('../models/search-cache.model', () => ({
   SearchCacheModel: {
     findOne: jest.fn(),
     findOneAndUpdate: jest.fn(),

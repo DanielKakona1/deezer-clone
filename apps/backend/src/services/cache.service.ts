@@ -1,4 +1,4 @@
-import { SearchCacheModel } from '../models/searchCache.model';
+import { SearchCacheModel } from '../models/search-cache.model';
 
 const CACHE_TTL_MS = 30 * 60 * 1000;
 

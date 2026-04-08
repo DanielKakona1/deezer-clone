@@ -3,6 +3,11 @@ import axios from 'axios';
 import { env } from '../config/env';
 import { type CacheKey, getCachedPayload, setCachedPayload } from './cache.service';
 
+export type DeezerSearchOptions = {
+  strict?: 'on';
+  order?: string;
+};
+
 const deezerClient = axios.create({
   baseURL: env.DEEZER_API_BASE_URL,
   timeout: 10_000,
@@ -21,19 +26,63 @@ const getWithCache = async <T>(cacheKey: CacheKey, path: string, params?: Record
   return response.data;
 };
 
-export const searchArtists = (query: string, limit: number, index: number) => {
+const buildSearchQueryKey = (
+  prefix: string,
+  query: string,
+  options: DeezerSearchOptions | undefined,
+) => {
+  const strictValue = options?.strict ?? 'off';
+  const orderValue = options?.order ?? 'none';
+
+  return `${prefix}:${query}:strict=${strictValue}:order=${orderValue}`;
+};
+
+const getSearchParams = (
+  query: string,
+  limit: number,
+  index: number,
+  options: DeezerSearchOptions = {},
+) => {
+  return {
+    q: query,
+    limit,
+    index,
+    ...(options.strict ? { strict: options.strict } : {}),
+    ...(options.order ? { order: options.order } : {}),
+  };
+};
+
+export const searchTracks = (
+  query: string,
+  limit: number,
+  index: number,
+  options?: DeezerSearchOptions,
+) => {
   return getWithCache(
     {
-      query: `artist-search:${query}`,
+      query: buildSearchQueryKey('track-search', query, options),
+      limit,
+      index,
+    },
+    '/search',
+    getSearchParams(query, limit, index, options),
+  );
+};
+
+export const searchArtists = (
+  query: string,
+  limit: number,
+  index: number,
+  options?: DeezerSearchOptions,
+) => {
+  return getWithCache(
+    {
+      query: buildSearchQueryKey('artist-search', query, options),
       limit,
       index,
     },
     '/search/artist',
-    {
-      q: query,
-      limit,
-      index,
-    },
+    getSearchParams(query, limit, index, options),
   );
 };
 
