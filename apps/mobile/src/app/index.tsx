@@ -3,8 +3,8 @@ import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useRef } from 'react';
-import { ActivityIndicator, Animated, Easing, FlatList, TextInput, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Animated, TextInput, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 
 import { ArtistCard } from '@/components/search/ArtistCard';
@@ -13,66 +13,96 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { useSearchStore } from '@/store/search.store';
 import type { Artist } from '@/types/artist.types';
 
+const HEADER_EXPANDED_HEIGHT = 200;
+const HEADER_COLLAPSED_HEIGHT = 96;
+const HEADER_COLLAPSE_DISTANCE = HEADER_EXPANDED_HEIGHT - HEADER_COLLAPSED_HEIGHT;
+const HEADER_FADE_DISTANCE = HEADER_COLLAPSE_DISTANCE * 1.35;
+const SEARCH_BAR_HEIGHT = 54;
+const SEARCH_VERTICAL_GAP = 8;
+const LOGO_TO_LABEL_GAP = 10;
+const SEARCH_TO_SECTION_GAP = 2;
+const SKELETON_PULSE_DURATION = 1050;
+
+const SkeletonRows = ({ rows }: { rows: number }) => {
+  const shimmerOpacity = useRef(new Animated.Value(0.58)).current;
+
+  useEffect(() => {
+    const shimmerLoop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(shimmerOpacity, {
+          toValue: 1,
+          duration: SKELETON_PULSE_DURATION,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shimmerOpacity, {
+          toValue: 0.58,
+          duration: SKELETON_PULSE_DURATION,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+
+    shimmerLoop.start();
+
+    return () => {
+      shimmerLoop.stop();
+    };
+  }, [shimmerOpacity]);
+
+  return (
+    <SkeletonGrid>
+      {Array.from({ length: rows }).map((_, rowIndex) => (
+        <SkeletonRow key={`skeleton-row-${rowIndex}`}>
+          <SkeletonCard>
+            <SkeletonArtwork style={{ opacity: shimmerOpacity }} />
+            <SkeletonTitleLine style={{ opacity: shimmerOpacity }} />
+            <SkeletonSubtitleLine style={{ opacity: shimmerOpacity }} />
+          </SkeletonCard>
+
+          <SkeletonCard>
+            <SkeletonArtwork style={{ opacity: shimmerOpacity }} />
+            <SkeletonTitleLine style={{ opacity: shimmerOpacity }} />
+            <SkeletonSubtitleLine style={{ opacity: shimmerOpacity }} />
+          </SkeletonCard>
+        </SkeletonRow>
+      ))}
+    </SkeletonGrid>
+  );
+};
+
 export default function SearchScreen() {
+  const insets = useSafeAreaInsets();
   const query = useSearchStore((state) => state.query);
   const setQuery = useSearchStore((state) => state.setQuery);
   const debouncedQuery = useDebounce(query, 260);
+  const headerExpandedWithInset = HEADER_EXPANDED_HEIGHT + insets.top;
+  const headerCollapsedWithInset = HEADER_COLLAPSED_HEIGHT + insets.top;
   const scrollY = useRef(new Animated.Value(0)).current;
-  const headerOpacity = useRef(new Animated.Value(0)).current;
-  const headerTranslateY = useRef(new Animated.Value(16)).current;
-  const searchOpacity = useRef(new Animated.Value(0)).current;
-  const searchTranslateY = useRef(new Animated.Value(16)).current;
-  const topLabelOpacity = scrollY.interpolate({
-    inputRange: [0, 40],
-    outputRange: [1, 0],
+  const headerHeight = scrollY.interpolate({
+    inputRange: [0, HEADER_COLLAPSE_DISTANCE],
+    outputRange: [headerExpandedWithInset, headerCollapsedWithInset],
     extrapolate: 'clamp',
   });
-  const topLabelTranslateX = scrollY.interpolate({
-    inputRange: [0, 40],
-    outputRange: [0, -8],
+  const brandOpacity = scrollY.interpolate({
+    inputRange: [0, HEADER_COLLAPSE_DISTANCE * 0.7, HEADER_FADE_DISTANCE],
+    outputRange: [1, 0.55, 0],
+    extrapolate: 'clamp',
+  });
+  const brandTranslateY = scrollY.interpolate({
+    inputRange: [0, HEADER_FADE_DISTANCE],
+    outputRange: [0, -14],
     extrapolate: 'clamp',
   });
   const titleOpacity = scrollY.interpolate({
-    inputRange: [0, 90],
-    outputRange: [1, 0],
+    inputRange: [0, HEADER_COLLAPSE_DISTANCE * 0.55, HEADER_FADE_DISTANCE],
+    outputRange: [1, 0.5, 0],
     extrapolate: 'clamp',
   });
   const titleTranslateY = scrollY.interpolate({
-    inputRange: [0, 90],
-    outputRange: [0, -18],
+    inputRange: [0, HEADER_FADE_DISTANCE],
+    outputRange: [0, -22],
     extrapolate: 'clamp',
   });
-
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(headerOpacity, {
-        toValue: 1,
-        duration: 360,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      Animated.timing(headerTranslateY, {
-        toValue: 0,
-        duration: 360,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      Animated.timing(searchOpacity, {
-        toValue: 1,
-        duration: 380,
-        delay: 110,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      Animated.timing(searchTranslateY, {
-        toValue: 0,
-        duration: 380,
-        delay: 110,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [headerOpacity, headerTranslateY, searchOpacity, searchTranslateY]);
 
   const {
     artists,
@@ -111,8 +141,8 @@ export default function SearchScreen() {
       return <EmptyState>Search artists to discover Deezer profiles.</EmptyState>;
     }
 
-    if (isLoading || isFetching) {
-      return <EmptyState>Searching artists...</EmptyState>;
+    if (isLoading || (isFetching && artists.length === 0)) {
+      return <SkeletonRows rows={2} />;
     }
 
     if (isError) {
@@ -122,34 +152,47 @@ export default function SearchScreen() {
     return <EmptyState>No artist matches this search.</EmptyState>;
   };
 
+  const listContentStyle = {
+    paddingTop: headerExpandedWithInset - (SEARCH_VERTICAL_GAP - SEARCH_TO_SECTION_GAP),
+    paddingBottom: 44,
+  };
+
   return (
     <Container>
       <StatusBar style="light" />
 
-      <HeaderIntro style={{ opacity: headerOpacity, transform: [{ translateY: headerTranslateY }] }}>
-        <BrandRow>
-          <BrandMark source={require('../../assets/Logo.png')} contentFit="contain" />
-          <TopLabel style={{ opacity: topLabelOpacity, transform: [{ translateX: topLabelTranslateX }] }}>
-            SEARCH
-          </TopLabel>
+      <HeaderShell style={{ height: headerHeight }}>
+        <BrandRow
+          style={{
+            top: insets.top,
+            opacity: brandOpacity,
+            transform: [{ translateY: brandTranslateY }],
+          }}
+        >
+          <BrandMark source={require('../../assets/Logo.png')} contentFit="contain" contentPosition="left" />
+          <TopLabel>SEARCH</TopLabel>
         </BrandRow>
-      </HeaderIntro>
 
-      <StickySearchShell style={{ opacity: searchOpacity, transform: [{ translateY: searchTranslateY }] }}>
-        <SearchBar>
-          <SearchIcon name="search" size={18} color="#d2b0ff" />
-          <SearchInput
-            value={query}
-            onChangeText={handleQueryChange}
-            placeholder="Artists, tracks, albums"
-            placeholderTextColor="#9886b3"
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-        </SearchBar>
-      </StickySearchShell>
+        <TitleShell style={{ opacity: titleOpacity, transform: [{ translateY: titleTranslateY }] }}>
+          <Title>What do you want to listen to?</Title>
+        </TitleShell>
 
-      <FlatList
+        <SearchShell>
+          <SearchBar>
+            <SearchIcon name="search" size={18} color="#d2b0ff" />
+            <SearchInput
+              value={query}
+              onChangeText={handleQueryChange}
+              placeholder="Artists, tracks, albums"
+              placeholderTextColor="#9886b3"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+          </SearchBar>
+        </SearchShell>
+      </HeaderShell>
+
+      <Animated.FlatList
         data={artists}
         numColumns={2}
         keyExtractor={(item) => String(item.id)}
@@ -159,7 +202,7 @@ export default function SearchScreen() {
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.4}
         onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
-          useNativeDriver: true,
+          useNativeDriver: false,
         })}
         scrollEventThrottle={16}
         renderItem={renderArtist}
@@ -170,20 +213,14 @@ export default function SearchScreen() {
         }}
         refreshing={isFetching && !isFetchingNextPage}
         ListHeaderComponent={
-          <>
-            <TitleShell style={{ opacity: titleOpacity, transform: [{ translateY: titleTranslateY }] }}>
-              <Title>What do you want to listen to?</Title>
-            </TitleShell>
-
-            <SectionHeader>
-              <SectionTitle>Artists</SectionTitle>
-            </SectionHeader>
-          </>
+          <SectionHeader>
+            <SectionTitle>Artists</SectionTitle>
+          </SectionHeader>
         }
         ListFooterComponent={
           isFetchingNextPage ? (
             <FooterLoader>
-              <ActivityIndicator color="#a238ff" />
+              <SkeletonRows rows={1} />
             </FooterLoader>
           ) : null
         }
@@ -198,20 +235,29 @@ const Container = styled(SafeAreaView)`
   background-color: #1b191f;
 `;
 
-const HeaderIntro = styled(Animated.View)`
-  padding: ${({ theme }) => theme.spacing.xl}px ${({ theme }) => theme.spacing.lg}px
-    ${({ theme }) => theme.spacing.sm}px;
-`;
-
-const BrandRow = styled(View)`
-  flex-direction: row;
-  align-items: center;
-`;
-
-const StickySearchShell = styled(Animated.View)`
+const HeaderShell = styled(Animated.View)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
   background-color: #1b191f;
-  padding: ${({ theme }) => theme.spacing.sm}px ${({ theme }) => theme.spacing.lg}px
-    ${({ theme }) => theme.spacing.md}px;
+  overflow: hidden;
+`;
+
+const BrandRow = styled(Animated.View)`
+  position: absolute;
+  left: ${({ theme }) => theme.spacing.lg}px;
+  right: ${({ theme }) => theme.spacing.lg}px;
+  flex-direction: column;
+  align-items: flex-start;
+`;
+
+const SearchShell = styled(View)`
+  position: absolute;
+  left: ${({ theme }) => theme.spacing.lg}px;
+  right: ${({ theme }) => theme.spacing.lg}px;
+  bottom: ${SEARCH_VERTICAL_GAP}px;
 `;
 
 const BrandMark = styled(Image)`
@@ -221,12 +267,12 @@ const BrandMark = styled(Image)`
 `;
 
 const SectionHeader = styled(View)`
-  padding: ${({ theme }) => theme.spacing.md}px ${({ theme }) => theme.spacing.lg}px
+  padding: 0 ${({ theme }) => theme.spacing.lg}px
     ${({ theme }) => theme.spacing.sm}px;
 `;
 
-const TopLabel = styled(Animated.Text)`
-  margin-left: ${({ theme }) => theme.spacing.sm}px;
+const TopLabel = styled.Text`
+  margin-top: ${LOGO_TO_LABEL_GAP}px;
   color: #cda7ff;
   font-family: Poppins_600SemiBold;
   font-size: 11px;
@@ -234,7 +280,10 @@ const TopLabel = styled(Animated.Text)`
 `;
 
 const TitleShell = styled(Animated.View)`
-  padding: ${({ theme }) => theme.spacing.sm}px ${({ theme }) => theme.spacing.lg}px 0;
+  position: absolute;
+  left: ${({ theme }) => theme.spacing.lg}px;
+  right: ${({ theme }) => theme.spacing.lg}px;
+  bottom: ${SEARCH_BAR_HEIGHT + SEARCH_VERTICAL_GAP * 2}px;
 `;
 
 const Title = styled.Text`
@@ -245,7 +294,7 @@ const Title = styled.Text`
 `;
 
 const SearchBar = styled(View)`
-  height: 54px;
+  height: ${SEARCH_BAR_HEIGHT}px;
   border-radius: 27px;
   border-width: 1px;
   border-color: #5c3b7f;
@@ -256,7 +305,7 @@ const SearchBar = styled(View)`
 `;
 
 const SearchIcon = styled(Ionicons)`
-  margin-right: ${({ theme }) => theme.spacing.sm}px;
+  margin-right: ${({ theme }) => theme.spacing.lg}px;
 `;
 
 const SearchInput = styled(TextInput)`
@@ -267,7 +316,7 @@ const SearchInput = styled(TextInput)`
 `;
 
 const SectionTitle = styled.Text`
-  margin-top: ${({ theme }) => theme.spacing.xl}px;
+  margin-top: 0;
   color: #f8f8ff;
   font-family: Poppins_700Bold;
   font-size: 21px;
@@ -281,13 +330,45 @@ const EmptyState = styled.Text`
 `;
 
 const FooterLoader = styled.View`
-  padding-top: ${({ theme }) => theme.spacing.sm}px;
+  padding-top: ${({ theme }) => theme.spacing.xs}px;
   padding-bottom: ${({ theme }) => theme.spacing.xl}px;
 `;
 
-const listContentStyle = {
-  paddingBottom: 44,
-};
+const SkeletonGrid = styled(View)`
+  padding: 0 ${({ theme }) => theme.spacing.lg}px;
+`;
+
+const SkeletonRow = styled(View)`
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: ${({ theme }) => theme.spacing.xl}px;
+`;
+
+const SkeletonCard = styled(View)`
+  width: 48.5%;
+`;
+
+const SkeletonArtwork = styled(View)`
+  height: 206px;
+  border-radius: 18px;
+  background-color: #2a2632;
+`;
+
+const SkeletonTitleLine = styled(View)`
+  width: 72%;
+  height: 16px;
+  border-radius: 8px;
+  margin-top: ${({ theme }) => theme.spacing.sm}px;
+  background-color: #332d3f;
+`;
+
+const SkeletonSubtitleLine = styled(View)`
+  width: 44%;
+  height: 13px;
+  border-radius: 7px;
+  margin-top: ${({ theme }) => theme.spacing.xs}px;
+  background-color: #403554;
+`;
 
 const columnWrapperStyle = {
   justifyContent: 'space-between' as const,
