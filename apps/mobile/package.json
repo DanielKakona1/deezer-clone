@@ -8,7 +8,8 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "test": "jest --passWithNoTests"
+    "test": "jest --passWithNoTests",
+    "test:e2e": "maestro test .maestro/search-artist-flow.yaml"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",

@@ -204,6 +204,7 @@ export default function SearchScreen() {
           <SearchBar>
             <SearchIcon name="search" size={18} color="#d2b0ff" />
             <SearchInput
+              testID="search-input"
               value={query}
               onChangeText={handleQueryChange}
               placeholder="Artists, tracks, albums"
