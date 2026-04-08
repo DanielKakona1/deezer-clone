@@ -13,6 +13,7 @@ export type ArtistTrack = {
   duration: number;
   rank: number;
   preview: string;
+  explicit_lyrics?: boolean;
 };
 
 export type ArtistAlbum = {

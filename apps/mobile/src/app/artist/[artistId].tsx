@@ -31,6 +31,15 @@ const formatDuration = (seconds: number) => {
   return `${minutes}:${String(remainingSeconds).padStart(2, '0')}`;
 };
 
+const formatReleaseYear = (releaseDate?: string) => {
+  if (!releaseDate) {
+    return null;
+  }
+
+  const year = releaseDate.slice(0, 4);
+  return /^\d{4}$/.test(year) ? year : null;
+};
+
 const ArtistDetailsSkeleton = () => {
   const shimmerOpacity = useRef(new Animated.Value(0.58)).current;
 
@@ -120,10 +129,13 @@ export default function ArtistDetailsScreen() {
   }, [refetchAll]);
 
   const renderAlbum = useCallback(({ item }: { item: ArtistAlbum }) => {
+    const releaseYear = formatReleaseYear(item.release_date);
+
     return (
       <AlbumCard>
         <AlbumCover source={item.cover_big || item.cover_medium || item.cover} contentFit="cover" />
         <AlbumTitle numberOfLines={2}>{item.title}</AlbumTitle>
+        {releaseYear ? <AlbumYear>{releaseYear}</AlbumYear> : null}
       </AlbumCard>
     );
   }, []);
@@ -189,7 +201,14 @@ export default function ArtistDetailsScreen() {
             <TrackRow key={track.id}>
               <TrackIndex>{index + 1}</TrackIndex>
               <TrackMeta>
-                <TrackTitle numberOfLines={1}>{track.title_short || track.title}</TrackTitle>
+                <TrackTitleRow>
+                  <TrackTitle numberOfLines={1}>{track.title_short || track.title}</TrackTitle>
+                  {track.explicit_lyrics ? (
+                    <ExplicitBadge>
+                      <ExplicitBadgeText>E</ExplicitBadgeText>
+                    </ExplicitBadge>
+                  ) : null}
+                </TrackTitleRow>
                 <TrackSubText>Rank {track.rank.toLocaleString()}</TrackSubText>
               </TrackMeta>
               <TrackDuration>{formatDuration(track.duration)}</TrackDuration>
@@ -313,10 +332,34 @@ const TrackMeta = styled(View)`
   margin-left: ${({ theme }) => theme.spacing.sm}px;
 `;
 
+const TrackTitleRow = styled(View)`
+  flex-direction: row;
+  align-items: center;
+`;
+
 const TrackTitle = styled.Text`
+  flex-shrink: 1;
   color: #f8f8ff;
   font-family: Poppins_600SemiBold;
   font-size: 14px;
+`;
+
+const ExplicitBadge = styled(View)`
+  margin-left: ${({ theme }) => theme.spacing.xs}px;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  padding-horizontal: 4px;
+  align-items: center;
+  justify-content: center;
+  background-color: #a238ff;
+`;
+
+const ExplicitBadgeText = styled.Text`
+  color: #ffffff;
+  font-family: Poppins_700Bold;
+  font-size: 10px;
+  line-height: 12px;
 `;
 
 const TrackSubText = styled.Text`
@@ -350,6 +393,13 @@ const AlbumTitle = styled.Text`
   font-family: Poppins_500Medium;
   font-size: 13px;
   line-height: 18px;
+`;
+
+const AlbumYear = styled.Text`
+  margin-top: 2px;
+  color: #bfaed7;
+  font-family: Poppins_400Regular;
+  font-size: 11px;
 `;
 
 const CenterState = styled(View)`
