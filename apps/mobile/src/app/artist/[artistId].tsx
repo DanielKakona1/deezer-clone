@@ -87,7 +87,7 @@ const ArtistDetailsSkeleton = () => {
         </Hero>
 
         <Section>
-          <SectionTitle>Top tracks</SectionTitle>
+          <SectionTitle>Top 5 Tracks</SectionTitle>
 
           {Array.from({ length: 5 }).map((_, index) => (
             <SkeletonTrackRow key={`track-skeleton-${index}`}>
@@ -195,7 +195,7 @@ export default function ArtistDetailsScreen() {
         </Hero>
 
         <Section>
-          <SectionTitle>Top tracks</SectionTitle>
+          <SectionTitle>Top 5 Tracks</SectionTitle>
 
           {topTracks.map((track, index) => (
             <TrackRow key={track.id}>
