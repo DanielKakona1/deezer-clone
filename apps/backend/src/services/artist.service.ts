@@ -8,6 +8,8 @@ export type DeezerSearchOptions = {
   order?: string;
 };
 
+const MIN_CACHEABLE_SEARCH_QUERY_LENGTH = 3;
+
 const deezerClient = axios.create({
   baseURL: env.DEEZER_API_BASE_URL,
   timeout: 10_000,
@@ -24,6 +26,16 @@ const getWithCache = async <T>(cacheKey: CacheKey, path: string, params?: Record
   await setCachedPayload(cacheKey, response.data);
 
   return response.data;
+};
+
+const getWithoutCache = async <T>(path: string, params?: Record<string, unknown>) => {
+  const response = await deezerClient.get<T>(path, { params });
+
+  return response.data;
+};
+
+const normalizeSearchQuery = (query: string) => {
+  return query.trim().toLowerCase().replace(/\s+/g, ' ');
 };
 
 const buildSearchQueryKey = (
@@ -58,14 +70,21 @@ export const searchTracks = (
   index: number,
   options?: DeezerSearchOptions,
 ) => {
+  const normalizedSearchQuery = normalizeSearchQuery(query);
+  const searchParams = getSearchParams(query.trim(), limit, index, options);
+
+  if (normalizedSearchQuery.length < MIN_CACHEABLE_SEARCH_QUERY_LENGTH) {
+    return getWithoutCache('/search', searchParams);
+  }
+
   return getWithCache(
     {
-      query: buildSearchQueryKey('track-search', query, options),
+      query: buildSearchQueryKey('track-search', normalizedSearchQuery, options),
       limit,
       index,
     },
     '/search',
-    getSearchParams(query, limit, index, options),
+    searchParams,
   );
 };
 
@@ -75,14 +94,21 @@ export const searchArtists = (
   index: number,
   options?: DeezerSearchOptions,
 ) => {
+  const normalizedSearchQuery = normalizeSearchQuery(query);
+  const searchParams = getSearchParams(query.trim(), limit, index, options);
+
+  if (normalizedSearchQuery.length < MIN_CACHEABLE_SEARCH_QUERY_LENGTH) {
+    return getWithoutCache('/search/artist', searchParams);
+  }
+
   return getWithCache(
     {
-      query: buildSearchQueryKey('artist-search', query, options),
+      query: buildSearchQueryKey('artist-search', normalizedSearchQuery, options),
       limit,
       index,
     },
     '/search/artist',
-    getSearchParams(query, limit, index, options),
+    searchParams,
   );
 };
 

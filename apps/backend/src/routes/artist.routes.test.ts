@@ -84,6 +84,18 @@ describe('Artist routes', () => {
     });
   });
 
+  it('normalizes artist search query before forwarding to service', async () => {
+    (searchArtists as unknown as jest.Mock).mockResolvedValue({
+      data: [{ id: 15, name: 'Daft Punk' }],
+      total: 1,
+    });
+
+    const response = await request(app).get('/api/deezer/search/artists?q=%20%20DaFt%20%20Punk%20%20');
+
+    expect(response.status).toBe(200);
+    expect(searchArtists).toHaveBeenCalledWith('DaFt  Punk', 25, 0, {});
+  });
+
   it('returns artist details payload', async () => {
     (getArtistById as unknown as jest.Mock).mockResolvedValue({
       id: 13,
