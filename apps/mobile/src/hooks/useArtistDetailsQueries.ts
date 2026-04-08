@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 
@@ -30,11 +30,20 @@ export const useArtistDetailsQueries = (artistId: number) => {
     topTracksQuery.isLoading ||
     albumsQuery.isLoading;
 
+  const isFetching =
+    artistQuery.isFetching ||
+    topTracksQuery.isFetching ||
+    albumsQuery.isFetching;
+
   const isError = artistQuery.isError || topTracksQuery.isError || albumsQuery.isError;
 
-  const refetchAll = async () => {
+  const hasLoadedData = Boolean(artistQuery.data || topTracksQuery.data || albumsQuery.data);
+
+  const isRefreshing = isFetching && hasLoadedData;
+
+  const refetchAll = useCallback(async () => {
     await Promise.all([artistQuery.refetch(), topTracksQuery.refetch(), albumsQuery.refetch()]);
-  };
+  }, [albumsQuery, artistQuery, topTracksQuery]);
 
   const topTracks = useMemo(() => {
     return topTracksQuery.data?.data ?? [];
@@ -50,6 +59,7 @@ export const useArtistDetailsQueries = (artistId: number) => {
     topTracks,
     albums,
     isLoading,
+    isRefreshing,
     isError,
     refetchAll,
   };

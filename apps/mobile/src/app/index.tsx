@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Animated, TextInput, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
@@ -116,27 +116,27 @@ export default function SearchScreen() {
     refetch,
   } = useArtistSearchQuery(debouncedQuery);
 
-  const handleLoadMore = () => {
+  const handleLoadMore = useCallback(() => {
     if (!hasNextPage || isFetchingNextPage) {
       return;
     }
 
     void fetchNextPage();
-  };
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
-  const handleQueryChange = (value: string) => {
+  const handleQueryChange = useCallback((value: string) => {
     setQuery(value);
-  };
+  }, [setQuery]);
 
-  const handleArtistPress = (artistId: number) => {
+  const handleArtistPress = useCallback((artistId: number) => {
     router.push(`/artist/${artistId}`);
-  };
+  }, []);
 
-  const renderArtist = ({ item, index }: { item: Artist; index: number }) => {
+  const renderArtist = useCallback(({ item, index }: { item: Artist; index: number }) => {
     return <ArtistCard artist={item} index={index} onPress={handleArtistPress} />;
-  };
+  }, [handleArtistPress]);
 
-  const renderEmptyState = () => {
+  const emptyState = useMemo(() => {
     if (!shouldSearch) {
       return <EmptyState>Search artists to discover Deezer profiles.</EmptyState>;
     }
@@ -150,12 +150,29 @@ export default function SearchScreen() {
     }
 
     return <EmptyState>No artist matches this search.</EmptyState>;
-  };
+  }, [artists.length, isError, isFetching, isLoading, shouldSearch]);
 
-  const listContentStyle = {
-    paddingTop: headerExpandedWithInset - (SEARCH_VERTICAL_GAP - SEARCH_TO_SECTION_GAP),
-    paddingBottom: 44,
-  };
+  const listContentStyle = useMemo(
+    () => ({
+      paddingTop: headerExpandedWithInset - (SEARCH_VERTICAL_GAP - SEARCH_TO_SECTION_GAP),
+      paddingBottom: 44,
+    }),
+    [headerExpandedWithInset]
+  );
+
+  const onListScroll = useMemo(
+    () =>
+      Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+        useNativeDriver: false,
+      }),
+    [scrollY]
+  );
+
+  const handleRefresh = useCallback(() => {
+    if (shouldSearch) {
+      void refetch();
+    }
+  }, [refetch, shouldSearch]);
 
   return (
     <Container>
@@ -201,16 +218,10 @@ export default function SearchScreen() {
         showsVerticalScrollIndicator={false}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.4}
-        onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
-          useNativeDriver: false,
-        })}
+        onScroll={onListScroll}
         scrollEventThrottle={16}
         renderItem={renderArtist}
-        onRefresh={() => {
-          if (shouldSearch) {
-            void refetch();
-          }
-        }}
+        onRefresh={handleRefresh}
         refreshing={isFetching && !isFetchingNextPage}
         ListHeaderComponent={
           <SectionHeader>
@@ -224,7 +235,7 @@ export default function SearchScreen() {
             </FooterLoader>
           ) : null
         }
-        ListEmptyComponent={renderEmptyState()}
+        ListEmptyComponent={emptyState}
       />
     </Container>
   );

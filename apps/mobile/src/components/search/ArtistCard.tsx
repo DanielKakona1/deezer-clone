@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { Animated, Pressable } from 'react-native';
-import { useEffect, useRef } from 'react';
+import { memo, useEffect, useRef } from 'react';
 import styled from 'styled-components/native';
 
 import type { Artist } from '@/types/artist.types';
@@ -23,7 +23,7 @@ const formatFans = (fans: number) => {
   return `${fans} fans`;
 };
 
-export const ArtistCard = ({ artist, index = 0, onPress }: ArtistCardProps) => {
+export const ArtistCard = memo(({ artist, index = 0, onPress }: ArtistCardProps) => {
   const opacity = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(12)).current;
 
@@ -53,7 +53,7 @@ export const ArtistCard = ({ artist, index = 0, onPress }: ArtistCardProps) => {
       </CardButton>
     </CardWrapper>
   );
-};
+});
 
 const CardWrapper = styled(Animated.View)`
   width: 48.5%;

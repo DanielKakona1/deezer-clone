@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Animated, FlatList, Pressable, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
@@ -112,8 +112,23 @@ const ArtistDetailsSkeleton = () => {
 export default function ArtistDetailsScreen() {
   const params = useLocalSearchParams<{ artistId: string }>();
   const artistId = Number(params.artistId);
-  const { isArtistIdValid, artist, topTracks, albums, isLoading, isError, refetchAll } =
+  const { isArtistIdValid, artist, topTracks, albums, isLoading, isRefreshing, isError, refetchAll } =
     useArtistDetailsQueries(artistId);
+
+  const handleRetry = useCallback(() => {
+    void refetchAll();
+  }, [refetchAll]);
+
+  const renderAlbum = useCallback(({ item }: { item: ArtistAlbum }) => {
+    return (
+      <AlbumCard>
+        <AlbumCover source={item.cover_big || item.cover_medium || item.cover} contentFit="cover" />
+        <AlbumTitle numberOfLines={2}>{item.title}</AlbumTitle>
+      </AlbumCard>
+    );
+  }, []);
+
+  const albumKeyExtractor = useCallback((item: ArtistAlbum) => String(item.id), []);
 
   if (!isArtistIdValid) {
     return (
@@ -126,7 +141,7 @@ export default function ArtistDetailsScreen() {
     );
   }
 
-  if (isLoading && !artist) {
+  if ((isLoading && !artist) || isRefreshing) {
     return <ArtistDetailsSkeleton />;
   }
 
@@ -136,11 +151,7 @@ export default function ArtistDetailsScreen() {
         <StatusBar style="light" />
         <CenterState>
           <StateText>Could not load this artist.</StateText>
-          <RetryButton
-            onPress={() => {
-              void refetchAll();
-            }}
-          >
+          <RetryButton onPress={handleRetry}>
             <RetryLabel>Retry</RetryLabel>
           </RetryButton>
         </CenterState>
@@ -192,15 +203,10 @@ export default function ArtistDetailsScreen() {
           <FlatList
             horizontal
             data={albums}
-            keyExtractor={(item) => String(item.id)}
+            keyExtractor={albumKeyExtractor}
             contentContainerStyle={albumsListContentStyle}
             showsHorizontalScrollIndicator={false}
-            renderItem={({ item }: { item: ArtistAlbum }) => (
-              <AlbumCard>
-                <AlbumCover source={item.cover_big || item.cover_medium || item.cover} contentFit="cover" />
-                <AlbumTitle numberOfLines={2}>{item.title}</AlbumTitle>
-              </AlbumCard>
-            )}
+            renderItem={renderAlbum}
             ListEmptyComponent={<StateText>No albums found.</StateText>}
           />
         </Section>
