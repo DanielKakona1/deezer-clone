@@ -10,7 +10,6 @@ import styled from 'styled-components/native';
 import { ArtistCard } from '@/components/search/ArtistCard';
 import { useArtistSearchQuery } from '@/hooks/useArtistSearchQuery';
 import { useDebounce } from '@/hooks/useDebounce';
-import { useSearchStore } from '@/store/search.store';
 import type { Artist } from '@/types/artist.types';
 
 const HEADER_EXPANDED_HEIGHT = 200;
@@ -73,8 +72,7 @@ const SkeletonRows = ({ rows }: { rows: number }) => {
 export default function SearchScreen() {
   const insets = useSafeAreaInsets();
   const [isPullRefreshing, setIsPullRefreshing] = useState(false);
-  const query = useSearchStore((state) => state.query);
-  const setQuery = useSearchStore((state) => state.setQuery);
+  const [query, setQuery] = useState('');
   const debouncedQuery = useDebounce(query, 260);
   const headerExpandedWithInset = HEADER_EXPANDED_HEIGHT + insets.top;
   const headerCollapsedWithInset = HEADER_COLLAPSED_HEIGHT + insets.top;
