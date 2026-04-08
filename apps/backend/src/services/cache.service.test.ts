@@ -65,13 +65,19 @@ describe('cache.service', () => {
     expect(SearchCacheModel.findOneAndUpdate).toHaveBeenCalledWith(
       cacheKey,
       {
-        response: { data: [{ id: 27 }] },
-        fetchedAt: expect.any(Date),
+        $set: {
+          response: { data: [{ id: 27 }] },
+          fetchedAt: expect.any(Date),
+        },
+        $setOnInsert: {
+          query: cacheKey.query,
+          limit: cacheKey.limit,
+          index: cacheKey.index,
+        },
       },
       {
         upsert: true,
         new: true,
-        setDefaultsOnInsert: true,
       },
     );
   });
