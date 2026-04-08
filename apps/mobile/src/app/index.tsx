@@ -359,13 +359,13 @@ const SkeletonCard = styled(View)`
   width: 48.5%;
 `;
 
-const SkeletonArtwork = styled(View)`
+const SkeletonArtwork = styled(Animated.View)`
   height: 206px;
   border-radius: 18px;
   background-color: #2a2632;
 `;
 
-const SkeletonTitleLine = styled(View)`
+const SkeletonTitleLine = styled(Animated.View)`
   width: 72%;
   height: 16px;
   border-radius: 8px;
@@ -373,7 +373,7 @@ const SkeletonTitleLine = styled(View)`
   background-color: #332d3f;
 `;
 
-const SkeletonSubtitleLine = styled(View)`
+const SkeletonSubtitleLine = styled(Animated.View)`
   width: 44%;
   height: 13px;
   border-radius: 7px;
