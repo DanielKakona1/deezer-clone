@@ -7,5 +7,5 @@ name: Search and Artist Flow
 - inputText: 'rihanna'
 - assertVisible: 'Artists'
 - tapOn: 'Rihanna'
-- assertVisible: 'Top tracks'
+- assertVisible: 'Top 5 Tracks'
 - assertVisible: 'Albums'
