@@ -5,6 +5,20 @@
 
 Deezer-inspired mobile search + artist flow built as a `pnpm` Turborepo monorepo.
 
+## Screenshots
+
+![Search Screen 1](apps/mobile/assets/screenshots/Simulator%20Screenshot%20-%20iPhone%2016e%20-%202026-04-09%20at%2010.44.58.png)
+![Search Screen 2](apps/mobile/assets/screenshots/Simulator%20Screenshot%20-%20iPhone%2016e%20-%202026-04-09%20at%2010.45.17.png)
+![Search Screen 3](apps/mobile/assets/screenshots/Simulator%20Screenshot%20-%20iPhone%2016e%20-%202026-04-09%20at%2010.45.26.png)
+![Artist Screen 1](apps/mobile/assets/screenshots/Simulator%20Screenshot%20-%20iPhone%2016e%20-%202026-04-09%20at%2010.45.42.png)
+![Artist Screen 2](apps/mobile/assets/screenshots/Simulator%20Screenshot%20-%20iPhone%2016e%20-%202026-04-09%20at%2010.45.49.png)
+![Artist Screen 3](apps/mobile/assets/screenshots/Simulator%20Screenshot%20-%20iPhone%2016e%20-%202026-04-09%20at%2010.45.54.png)
+![Artist Screen 4](apps/mobile/assets/screenshots/Simulator%20Screenshot%20-%20iPhone%2016e%20-%202026-04-09%20at%2010.46.28.png)
+![Flow Screen 1](apps/mobile/assets/screenshots/Simulator%20Screenshot%20-%20iPhone%2016e%20-%202026-04-09%20at%2010.51.43.png)
+![Flow Screen 2](apps/mobile/assets/screenshots/Simulator%20Screenshot%20-%20iPhone%2016e%20-%202026-04-09%20at%2010.51.50.png)
+![Flow Screen 3](apps/mobile/assets/screenshots/Simulator%20Screenshot%20-%20iPhone%2016e%20-%202026-04-09%20at%2010.51.54.png)
+![Flow Screen 4](apps/mobile/assets/screenshots/Simulator%20Screenshot%20-%20iPhone%2016e%20-%202026-04-09%20at%2010.52.02.png)
+
 ## Monorepo structure
 
 - `apps/mobile` → Expo + React Native app
@@ -31,10 +45,19 @@ RATE_LIMIT_WINDOW_MS=900000
 RATE_LIMIT_MAX=200
 ```
 
+`MONGODB_URI` points to your Mongo instance and defaults to `mongodb://localhost:27017/deezer-mobile-clone` if omitted.
+
 ### Mobile (`apps/mobile/.env`)
 
 ```env
+# iOS simulator / local Expo
 EXPO_PUBLIC_API_URL=http://localhost:3333/api
+
+# Android emulator
+# EXPO_PUBLIC_API_URL=http://10.0.2.2:3333/api
+
+# Physical device (replace with your machine LAN IP)
+# EXPO_PUBLIC_API_URL=http://192.168.1.42:3333/api
 ```
 
 ## Install dependencies
@@ -83,10 +106,24 @@ Then use Expo shortcuts:
 ### Backend unit/integration tests
 
 ```bash
+pnpm --filter @deezer-mobile-clone/backend test:unit
+pnpm --filter @deezer-mobile-clone/backend test:integration
+```
+
+Run all backend tests:
+
+```bash
 pnpm --filter @deezer-mobile-clone/backend test
 ```
 
 ### Mobile unit tests (Jest + RTL)
+
+```bash
+pnpm --filter @deezer-mobile-clone/mobile test:unit
+pnpm --filter @deezer-mobile-clone/mobile test:integration
+```
+
+Run all mobile tests:
 
 ```bash
 pnpm --filter @deezer-mobile-clone/mobile test
