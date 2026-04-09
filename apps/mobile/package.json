@@ -13,7 +13,7 @@
     "typecheck": "tsc --noEmit",
     "test": "jest --passWithNoTests",
     "test:unit": "jest --passWithNoTests src",
-    "test:integration": "jest --passWithNoTests --testPathPattern=src/app",
+    "test:integration": "jest --passWithNoTests --testPathPattern='src/(app|tests/app)'",
     "test:e2e": "maestro test .maestro/search-artist-flow.yaml"
   },
   "dependencies": {
