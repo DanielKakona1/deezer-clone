@@ -1,5 +1,8 @@
 # deezer-mobile-clone
 
+[![CI](https://github.com/DanielKakona1/deezer-clone/actions/workflows/ci.yml/badge.svg)](https://github.com/DanielKakona1/deezer-clone/actions/workflows/ci.yml)
+[![Mobile E2E (Maestro)](https://github.com/DanielKakona1/deezer-clone/actions/workflows/e2e-mobile.yml/badge.svg)](https://github.com/DanielKakona1/deezer-clone/actions/workflows/e2e-mobile.yml)
+
 Deezer-inspired mobile search + artist flow built as a `pnpm` Turborepo monorepo.
 
 ## Monorepo structure
