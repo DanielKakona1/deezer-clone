@@ -8,7 +8,12 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
+    "lint": "eslint --ext .ts,.tsx src",
+    "format": "prettier --check \"{src,app.json,babel.config.js,jest.config.js,jest.setup.ts}/**/*.{ts,tsx,js,json,md,yml,yaml}\"",
+    "typecheck": "tsc --noEmit",
     "test": "jest --passWithNoTests",
+    "test:unit": "jest --passWithNoTests src",
+    "test:integration": "jest --passWithNoTests --testPathPattern=src/app",
     "test:e2e": "maestro test .maestro/search-artist-flow.yaml"
   },
   "dependencies": {
