@@ -15,7 +15,11 @@ const deezerClient = axios.create({
   timeout: 10_000,
 });
 
-const getWithCache = async <T>(cacheKey: CacheKey, path: string, params?: Record<string, unknown>) => {
+const getWithCache = async <T>(
+  cacheKey: CacheKey,
+  path: string,
+  params?: Record<string, unknown>,
+) => {
   const cachedPayload = await getCachedPayload<T>(cacheKey);
 
   if (cachedPayload) {

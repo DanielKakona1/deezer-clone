@@ -38,7 +38,7 @@ const SkeletonRows = ({ rows }: { rows: number }) => {
           duration: SKELETON_PULSE_DURATION,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     );
 
     shimmerLoop.start();
@@ -123,9 +123,12 @@ export default function SearchScreen() {
     void fetchNextPage();
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
-  const handleQueryChange = useCallback((value: string) => {
-    setQuery(value);
-  }, [setQuery]);
+  const handleQueryChange = useCallback(
+    (value: string) => {
+      setQuery(value);
+    },
+    [setQuery],
+  );
 
   const handleClearQuery = useCallback(() => {
     setQuery('');
@@ -135,9 +138,12 @@ export default function SearchScreen() {
     router.push(`/artist/${artistId}`);
   }, []);
 
-  const renderArtist = useCallback(({ item, index }: { item: Artist; index: number }) => {
-    return <ArtistCard artist={item} index={index} onPress={handleArtistPress} />;
-  }, [handleArtistPress]);
+  const renderArtist = useCallback(
+    ({ item, index }: { item: Artist; index: number }) => {
+      return <ArtistCard artist={item} index={index} onPress={handleArtistPress} />;
+    },
+    [handleArtistPress],
+  );
 
   const emptyState = useMemo(() => {
     if (!shouldSearch) {
@@ -160,7 +166,7 @@ export default function SearchScreen() {
       paddingTop: headerExpandedWithInset - (SEARCH_VERTICAL_GAP - SEARCH_TO_SECTION_GAP),
       paddingBottom: 44,
     }),
-    [headerExpandedWithInset]
+    [headerExpandedWithInset],
   );
 
   const onListScroll = useMemo(
@@ -168,7 +174,7 @@ export default function SearchScreen() {
       Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
         useNativeDriver: false,
       }),
-    [scrollY]
+    [scrollY],
   );
 
   const handleRefresh = useCallback(async () => {
@@ -196,7 +202,11 @@ export default function SearchScreen() {
             transform: [{ translateY: brandTranslateY }],
           }}
         >
-          <BrandMark source={require('../../assets/Logo.png')} contentFit="contain" contentPosition="left" />
+          <BrandMark
+            source={require('../../assets/Logo.png')}
+            contentFit="contain"
+            contentPosition="left"
+          />
           <TopLabel>SEARCH</TopLabel>
         </BrandRow>
 
@@ -299,8 +309,7 @@ const BrandMark = styled(Image)`
 `;
 
 const SectionHeader = styled(View)`
-  padding: 0 ${({ theme }) => theme.spacing.lg}px
-    ${({ theme }) => theme.spacing.sm}px;
+  padding: 0 ${({ theme }) => theme.spacing.lg}px ${({ theme }) => theme.spacing.sm}px;
 `;
 
 const TopLabel = styled.Text`

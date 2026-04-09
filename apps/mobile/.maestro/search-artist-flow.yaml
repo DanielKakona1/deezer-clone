@@ -3,9 +3,9 @@ name: Search and Artist Flow
 ---
 - launchApp
 - tapOn:
-    id: "search-input"
-- inputText: "rihanna"
-- assertVisible: "Artists"
-- tapOn: "Rihanna"
-- assertVisible: "Top tracks"
-- assertVisible: "Albums"
+    id: 'search-input'
+- inputText: 'rihanna'
+- assertVisible: 'Artists'
+- tapOn: 'Rihanna'
+- assertVisible: 'Top tracks'
+- assertVisible: 'Albums'

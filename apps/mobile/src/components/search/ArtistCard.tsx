@@ -47,7 +47,11 @@ export const ArtistCard = memo(({ artist, index = 0, onPress }: ArtistCardProps)
   return (
     <CardWrapper style={{ opacity, transform: [{ translateY }] }}>
       <CardButton onPress={() => onPress?.(artist.id)} accessibilityRole="button">
-        <ArtistImage source={artist.picture_xl || artist.picture} contentFit="cover" transition={180} />
+        <ArtistImage
+          source={artist.picture_xl || artist.picture}
+          contentFit="cover"
+          transition={180}
+        />
         <ArtistName numberOfLines={1}>{artist.name}</ArtistName>
         <FanCount>{formatFans(artist.nb_fan)}</FanCount>
       </CardButton>

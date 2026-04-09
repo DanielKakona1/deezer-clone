@@ -45,7 +45,11 @@ export const getArtistTopTracks = async (artistId: number, limit = 5) => {
   return response.data;
 };
 
-export const getArtistAlbums = async ({ artistId, limit = 20, index = 0 }: GetArtistAlbumsParams) => {
+export const getArtistAlbums = async ({
+  artistId,
+  limit = 20,
+  index = 0,
+}: GetArtistAlbumsParams) => {
   const response = await httpClient.get<DeezerListResponse<ArtistAlbum>>(
     `/deezer/artists/${artistId}/albums`,
     {

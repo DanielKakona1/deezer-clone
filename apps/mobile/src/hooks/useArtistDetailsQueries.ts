@@ -25,15 +25,9 @@ export const useArtistDetailsQueries = (artistId: number) => {
     enabled: isArtistIdValid,
   });
 
-  const isLoading =
-    artistQuery.isLoading ||
-    topTracksQuery.isLoading ||
-    albumsQuery.isLoading;
+  const isLoading = artistQuery.isLoading || topTracksQuery.isLoading || albumsQuery.isLoading;
 
-  const isFetching =
-    artistQuery.isFetching ||
-    topTracksQuery.isFetching ||
-    albumsQuery.isFetching;
+  const isFetching = artistQuery.isFetching || topTracksQuery.isFetching || albumsQuery.isFetching;
 
   const isError = artistQuery.isError || topTracksQuery.isError || albumsQuery.isError;
 

@@ -43,7 +43,4 @@ const searchCacheSchema = new Schema<SearchCacheDocument>(
 searchCacheSchema.index({ query: 1, limit: 1, index: 1 }, { unique: true });
 searchCacheSchema.index({ fetchedAt: 1 }, { expireAfterSeconds: 30 * 60 });
 
-export const SearchCacheModel = model<SearchCacheDocument>(
-  'SearchCache',
-  searchCacheSchema,
-);
+export const SearchCacheModel = model<SearchCacheDocument>('SearchCache', searchCacheSchema);

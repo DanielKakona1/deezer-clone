@@ -56,7 +56,7 @@ const ArtistDetailsSkeleton = () => {
           duration: SKELETON_PULSE_DURATION,
           useNativeDriver: true,
         }),
-      ])
+      ]),
     );
 
     shimmerLoop.start();
@@ -121,8 +121,16 @@ const ArtistDetailsSkeleton = () => {
 export default function ArtistDetailsScreen() {
   const params = useLocalSearchParams<{ artistId: string }>();
   const artistId = Number(params.artistId);
-  const { isArtistIdValid, artist, topTracks, albums, isLoading, isRefreshing, isError, refetchAll } =
-    useArtistDetailsQueries(artistId);
+  const {
+    isArtistIdValid,
+    artist,
+    topTracks,
+    albums,
+    isLoading,
+    isRefreshing,
+    isError,
+    refetchAll,
+  } = useArtistDetailsQueries(artistId);
 
   const handleRetry = useCallback(() => {
     void refetchAll();
@@ -177,7 +185,11 @@ export default function ArtistDetailsScreen() {
 
       <ScrollView contentContainerStyle={scrollContentStyle} showsVerticalScrollIndicator={false}>
         <Hero>
-          <HeroImage source={artist.picture_xl || artist.picture} contentFit="cover" transition={180} />
+          <HeroImage
+            source={artist.picture_xl || artist.picture}
+            contentFit="cover"
+            transition={180}
+          />
           <HeroOverlay />
 
           <BrandBadge source={require('../../../assets/Logo.png')} contentFit="contain" />

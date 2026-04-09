@@ -90,7 +90,9 @@ describe('Artist routes', () => {
       total: 1,
     });
 
-    const response = await request(app).get('/api/deezer/search/artists?q=%20%20DaFt%20%20Punk%20%20');
+    const response = await request(app).get(
+      '/api/deezer/search/artists?q=%20%20DaFt%20%20Punk%20%20',
+    );
 
     expect(response.status).toBe(200);
     expect(searchArtists).toHaveBeenCalledWith('DaFt  Punk', 25, 0, {});
