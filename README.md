@@ -7,17 +7,17 @@ Deezer-inspired mobile search + artist flow built as a `pnpm` Turborepo monorepo
 
 ## Screenshots
 
-![Search Screen 1](apps/mobile/assets/screenshots/Simulator%20Screenshot%20-%20iPhone%2016e%20-%202026-04-09%20at%2010.44.58.png)
-![Search Screen 2](apps/mobile/assets/screenshots/Simulator%20Screenshot%20-%20iPhone%2016e%20-%202026-04-09%20at%2010.45.17.png)
-![Search Screen 3](apps/mobile/assets/screenshots/Simulator%20Screenshot%20-%20iPhone%2016e%20-%202026-04-09%20at%2010.45.26.png)
-![Artist Screen 1](apps/mobile/assets/screenshots/Simulator%20Screenshot%20-%20iPhone%2016e%20-%202026-04-09%20at%2010.45.42.png)
-![Artist Screen 2](apps/mobile/assets/screenshots/Simulator%20Screenshot%20-%20iPhone%2016e%20-%202026-04-09%20at%2010.45.49.png)
-![Artist Screen 3](apps/mobile/assets/screenshots/Simulator%20Screenshot%20-%20iPhone%2016e%20-%202026-04-09%20at%2010.45.54.png)
-![Artist Screen 4](apps/mobile/assets/screenshots/Simulator%20Screenshot%20-%20iPhone%2016e%20-%202026-04-09%20at%2010.46.28.png)
-![Flow Screen 1](apps/mobile/assets/screenshots/Simulator%20Screenshot%20-%20iPhone%2016e%20-%202026-04-09%20at%2010.51.43.png)
-![Flow Screen 2](apps/mobile/assets/screenshots/Simulator%20Screenshot%20-%20iPhone%2016e%20-%202026-04-09%20at%2010.51.50.png)
-![Flow Screen 3](apps/mobile/assets/screenshots/Simulator%20Screenshot%20-%20iPhone%2016e%20-%202026-04-09%20at%2010.51.54.png)
-![Flow Screen 4](apps/mobile/assets/screenshots/Simulator%20Screenshot%20-%20iPhone%2016e%20-%202026-04-09%20at%2010.52.02.png)
+![Search Screen 1](apps/mobile/assets/screenshots/screenshot-01.png)
+![Search Screen 2](apps/mobile/assets/screenshots/screenshot-02.png)
+![Search Screen 3](apps/mobile/assets/screenshots/screenshot-03.png)
+![Artist Screen 1](apps/mobile/assets/screenshots/screenshot-04.png)
+![Artist Screen 2](apps/mobile/assets/screenshots/screenshot-05.png)
+![Artist Screen 3](apps/mobile/assets/screenshots/screenshot-06.png)
+![Artist Screen 4](apps/mobile/assets/screenshots/screenshot-07.png)
+![Flow Screen 1](apps/mobile/assets/screenshots/screenshot-08.png)
+![Flow Screen 2](apps/mobile/assets/screenshots/screenshot-09.png)
+![Flow Screen 3](apps/mobile/assets/screenshots/screenshot-10.png)
+![Flow Screen 4](apps/mobile/assets/screenshots/screenshot-11.png)
 
 ## Monorepo structure
 
