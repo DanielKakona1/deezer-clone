@@ -3,7 +3,7 @@ import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, TextInput, View } from 'react-native';
+import { Animated, Pressable, TextInput, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 
@@ -127,6 +127,10 @@ export default function SearchScreen() {
     setQuery(value);
   }, [setQuery]);
 
+  const handleClearQuery = useCallback(() => {
+    setQuery('');
+  }, [setQuery]);
+
   const handleArtistPress = useCallback((artistId: number) => {
     router.push(`/artist/${artistId}`);
   }, []);
@@ -212,6 +216,16 @@ export default function SearchScreen() {
               autoCapitalize="none"
               autoCorrect={false}
             />
+
+            {query.length > 0 ? (
+              <ClearButton
+                accessibilityRole="button"
+                accessibilityLabel="Clear search input"
+                onPress={handleClearQuery}
+              >
+                <Ionicons name="close-circle" size={18} color="#bca0dc" />
+              </ClearButton>
+            ) : null}
           </SearchBar>
         </SearchShell>
       </HeaderShell>
@@ -331,6 +345,11 @@ const SearchInput = styled(TextInput)`
   color: #ffffff;
   font-family: Poppins_500Medium;
   font-size: 15px;
+`;
+
+const ClearButton = styled(Pressable)`
+  margin-left: ${({ theme }) => theme.spacing.sm}px;
+  padding: 2px;
 `;
 
 const SectionTitle = styled.Text`
