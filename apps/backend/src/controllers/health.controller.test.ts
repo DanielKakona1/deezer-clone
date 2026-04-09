@@ -13,7 +13,10 @@ describe('health.controller', () => {
     const json = jest.fn().mockReturnThis();
     const res = { status, json } as unknown as Response;
 
-    (getHealthPayload as jest.Mock).mockReturnValue({ status: 'ok', timestamp: '2026-04-09T00:00:00.000Z' });
+    (getHealthPayload as jest.Mock).mockReturnValue({
+      status: 'ok',
+      timestamp: '2026-04-09T00:00:00.000Z',
+    });
 
     getHealth({} as Request, res);
 

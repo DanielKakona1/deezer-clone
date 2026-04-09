@@ -43,7 +43,7 @@ describe('artist.controller', () => {
 
     await getTrackSearch(req, res, next);
 
-    expect((res.status as unknown as jest.Mock)).toHaveBeenCalledWith(400);
+    expect(res.status as unknown as jest.Mock).toHaveBeenCalledWith(400);
   });
 
   it('forwards track search to service with parsed params and options', async () => {
@@ -66,7 +66,7 @@ describe('artist.controller', () => {
       strict: 'on',
       order: 'TRACK_ASC',
     });
-    expect((res.status as unknown as jest.Mock)).toHaveBeenCalledWith(200);
+    expect(res.status as unknown as jest.Mock).toHaveBeenCalledWith(200);
   });
 
   it('returns 400 when artistId is invalid for details route', async () => {
@@ -75,7 +75,7 @@ describe('artist.controller', () => {
 
     await getArtist(req, res, next);
 
-    expect((res.status as unknown as jest.Mock)).toHaveBeenCalledWith(400);
+    expect(res.status as unknown as jest.Mock).toHaveBeenCalledWith(400);
   });
 
   it('returns artist details payload', async () => {
@@ -87,7 +87,7 @@ describe('artist.controller', () => {
     await getArtist(req, res, next);
 
     expect(getArtistById).toHaveBeenCalledWith(13);
-    expect((res.status as unknown as jest.Mock)).toHaveBeenCalledWith(200);
+    expect(res.status as unknown as jest.Mock).toHaveBeenCalledWith(200);
   });
 
   it('returns top tracks payload with parsed limit', async () => {
@@ -99,7 +99,7 @@ describe('artist.controller', () => {
     await getArtistTop(req, res, next);
 
     expect(getArtistTopTracks).toHaveBeenCalledWith(13, 5);
-    expect((res.status as unknown as jest.Mock)).toHaveBeenCalledWith(200);
+    expect(res.status as unknown as jest.Mock).toHaveBeenCalledWith(200);
   });
 
   it('returns albums payload with parsed pagination', async () => {
@@ -114,7 +114,7 @@ describe('artist.controller', () => {
     await getAlbums(req, res, next);
 
     expect(getArtistAlbums).toHaveBeenCalledWith(13, 20, 3);
-    expect((res.status as unknown as jest.Mock)).toHaveBeenCalledWith(200);
+    expect(res.status as unknown as jest.Mock).toHaveBeenCalledWith(200);
   });
 
   it('normalizes artist search query forwarding', async () => {
@@ -126,6 +126,6 @@ describe('artist.controller', () => {
     await getArtistSearch(req, res, next);
 
     expect(searchArtists).toHaveBeenCalledWith('DaFt   Punk', 25, 0, {});
-    expect((res.status as unknown as jest.Mock)).toHaveBeenCalledWith(200);
+    expect(res.status as unknown as jest.Mock).toHaveBeenCalledWith(200);
   });
 });
