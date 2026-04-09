@@ -7,6 +7,10 @@ on:
       - 'apps/mobile/**'
       - '.github/workflows/e2e-mobile.yml'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   mobile-e2e:
     name: Android Emulator + Maestro
